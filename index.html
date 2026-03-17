@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To'la differensial tenglamalar testi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #1f3c88;
+      margin-bottom: 10px;
+    }
+
+    .info-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-weight: bold;
+    }
+
+    .timer {
+      color: #d62828;
+      font-size: 20px;
+    }
+
+    .question-box {
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      background: #fafafa;
+      margin-bottom: 20px;
+    }
+
+    .question-box h3 {
+      margin-top: 0;
+      color: #222;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      background: #f1f4fb;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    label:hover {
+      background: #e4ecff;
+    }
+
+    input[type="radio"] {
+      margin-right: 8px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      background: #1f3c88;
+      color: white;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #16306d;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #result {
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 12px;
+      background: #eef7ee;
+      border: 1px solid #cce3cc;
+    }
+
+    #result h2 {
+      margin-top: 0;
+      color: #155724;
+      text-align: center;
+    }
+
+    .result-item {
+      margin: 8px 0;
+      font-size: 18px;
+    }
+
+    .correct-answer {
+      color: green;
+      font-weight: bold;
+    }
+
+    .wrong-answer {
+      color: red;
+      font-weight: bold;
+    }
+
+    .review-box {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #fff;
+      border: 1px solid #ddd;
+    }
+
+    .review-box p {
+      margin: 6px 0;
+    }
+
+    .time-up {
+      color: #d62828;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>To'la differensial tenglamalar testi</h1>
+
+    <div class="info-bar">
+      <div id="questionNumber">Savol: 1 / 10</div>
+      <div class="timer">Vaqt: <span id="time">50</span> s</div>
+    </div>
+
+    <div id="timeUpMessage" class="time-up hidden">Vaqt tugadi! Keyingi savolga o'tildi.</div>
+
+    <div id="quizContainer" class="question-box"></div>
+
+    <div class="buttons">
+      <button onclick="nextQuestion()">Keyingi savol</button>
+      <button onclick="startQuiz()">Yangi 10 ta test</button>
+    </div>
+
+    <div id="result" class="hidden"></div>
+  </div>
+
+  <script>
+    const questions = [
+      { question: "1. M(x,y)dx + N(x,y)dy = 0 tenglama to‘la differensialli bo‘lishining sharti qaysi?", options: ["A) M = N", "B) ∂M/∂x = ∂N/∂y", "C) ∂M/∂y = ∂N/∂x", "D) M·N = 0"], answer: 2 },
+      { question: "2. Agar dF = Mdx + Ndy bo‘lsa, F(x,y) nima deyiladi?", options: ["A) Parametr", "B) Potensial funksiya", "C) Xususiy yechim", "D) O‘zgaruvchi"], answer: 1 },
+      { question: "3. Qaysi tenglama to‘la differensialli?", options: ["A) (2x+y)dx + xdy = 0", "B) (x²+y)dx + xdy = 0", "C) (x+y²)dx + ydy = 0", "D) (x²+y²)dx + (x+y)dy = 0"], answer: 0 },
+      { question: "4. (2x+y)dx + xdy = 0 tenglamaning umumiy integrali qaysi?", options: ["A) x² + xy = C", "B) 2x + y = C", "C) xy = C", "D) x² + y² = C"], answer: 0 },
+      { question: "5. To‘la differensialli tenglamada umumiy yechim odatda qanday yoziladi?", options: ["A) y' = f(x)", "B) x = g(y)", "C) F(x,y) = C", "D) M(x,y) = N(x,y)"], answer: 2 },
+      { question: "6. M=3x²+2y, N=2x+4y bo‘lsa qaysi hosilalar solishtiriladi?", options: ["A) Mx va Ny", "B) My va Nx", "C) M va N", "D) Mxx va Nyy"], answer: 1 },
+      { question: "7. (y-2x)dx + (x+3y)dy = 0 tenglama to‘la differensiallimi?", options: ["A) Ha", "B) Yo‘q", "C) Faqat x=0 da", "D) Faqat y=0 da"], answer: 0 },
+      { question: "8. (y-2x)dx + (x+3y)dy = 0 umumiy integrali qaysi?", options: ["A) xy - x² + 3/2 y² = C", "B) xy - 2x + 3y = C", "C) x² + y² = C", "D) xy = C"], answer: 0 },
+      { question: "9. (4x-3y)dx - 3xdy = 0 tenglama to‘la differensiallimi?", options: ["A) Ha", "B) Yo‘q", "C) Faqat y=0 da", "D) Aniqlab bo‘lmaydi"], answer: 0 },
+      { question: "10. (4x-3y)dx - 3xdy = 0 umumiy integrali qaysi?", options: ["A) 2x² - 3xy = C", "B) 4x - 3y = C", "C) xy = C", "D) x² + y² = C"], answer: 0 },
+      { question: "11. (x+y)dx + (x-y)dy = 0 uchun My va Nx qiymatlari?", options: ["A) 1 va 1", "B) 1 va -1", "C) -1 va 1", "D) 0 va 0"], answer: 0 },
+      { question: "12. (x+y)dx + (x-y)dy = 0 umumiy integral qaysi?", options: ["A) x²/2 + xy - y²/2 = C", "B) x+y = C", "C) x-y = C", "D) xy = C"], answer: 0 },
+      { question: "13. Qaysi biri to‘la differensialli emas?", options: ["A) (2xy+1)dx + x²dy = 0", "B) (x+y)dx + xdy = 0", "C) (y+cosx)dx + (x+2y)dy = 0", "D) (3x²-2y)dx - 2xdy = 0"], answer: 2 },
+      { question: "14. To‘la differensialli bo‘lmasa, keyingi usul qaysi?", options: ["A) Bernulli usuli", "B) Integrallovchi ko‘paytuvchi usuli", "C) Eyler usuli", "D) Lagranj usuli"], answer: 1 },
+      { question: "15. Integrallovchi ko‘paytuvchining vazifasi nima?", options: ["A) Tartibni oshiradi", "B) Tenglamani chiziqli qiladi", "C) Tenglamani to‘la differensialli ko‘rinishga keltiradi", "D) Hosilani yo‘qotadi"], answer: 2 },
+      { question: "16. μMdx + μNdy = 0 to‘la differensialli bo‘lsa, μ nima deyiladi?", options: ["A) Xususiy integral", "B) Integrallovchi ko‘paytuvchi", "C) Potensial funksiya", "D) Parametr"], answer: 1 },
+      { question: "17. Integrallovchi ko‘paytuvchi qaysi ko‘rinishlarda bo‘lishi mumkin?", options: ["A) Faqat μ(x)", "B) Faqat μ(y)", "C) μ(x) yoki μ(y)", "D) Faqat μ(xy)"], answer: 2 },
+      { question: "18. μ(x)=1/(1+x²) bo‘lsa, umumiy integral qaysi?", options: ["A) xy - ln(1+x²) = C", "B) xy - x² + 1 = C", "C) xy + ln(1+x²) = C", "D) x² + y² = C"], answer: 1 },
+      { question: "19. F(x,y) qaysi bo‘ladi?", options: ["A) F=xy+x²-1", "B) F=xy-x²+1", "C) F=x+y", "D) F=x²y"], answer: 1 },
+      { question: "20. Kitobdagi misolda qanday umumiy integral hosil bo‘ladi?", options: ["A) xy-x²+1=C", "B) xy+x²+1=C", "C) xy=C", "D) x²+y²=C"], answer: 0 },
+      { question: "21. μ(y)=y bo‘lsa umumiy integral qaysi?", options: ["A) x³y-y²=C", "B) x³y³-y²=C", "C) x³y³-2/3 y²=C", "D) x³y³-y²=3C"], answer: 2 },
+      { question: "22. Shu misolda qanday cheklov bor?", options: ["A) x≠0", "B) y≠0", "C) x+y≠0", "D) xy≠1"], answer: 1 },
+      { question: "23. Qaysi funksiya yechim emasligi ta’kidlangan?", options: ["A) x=0", "B) y=0", "C) x=1", "D) y=1"], answer: 1 },
+      { question: "24. M=x²y, N=x³-1 bo‘lsa My va Nx qaysi?", options: ["A) x², 3x²", "B) 2xy, 3x", "C) x², x³", "D) 2x, 3x²"], answer: 0 },
+      { question: "25. (My-Nx)/N=f(x) bo‘lsa, μ qanday izlanadi?", options: ["A) μ(y)", "B) μ(x)", "C) μ(x+y)", "D) μ(xy)"], answer: 1 },
+      { question: "26. (Nx-My)/M=g(y) bo‘lsa, μ qanday izlanadi?", options: ["A) μ(y)", "B) μ(x)", "C) μ(x-y)", "D) μ(xy)"], answer: 0 },
+      { question: "27. (2xy+y)dx + (x²+x)dy = 0 tenglama to‘la differensiallimi?", options: ["A) Ha", "B) Yo‘q", "C) Faqat x=0 da", "D) Faqat y=0 da"], answer: 0 },
+      { question: "28. (2xy+y)dx + (x²+x)dy = 0 umumiy integral qaysi?", options: ["A) x²y+xy=C", "B) 2xy+x=C", "C) x²+y²=C", "D) xy=C"], answer: 0 },
+      { question: "29. (cosx+y)dx + (x+2y)dy = 0 tenglama to‘la differensiallimi?", options: ["A) Ha", "B) Yo‘q", "C) Faqat x=0 da", "D) Faqat y=0 da"], answer: 0 },
+      { question: "30. (cosx+y)dx + (x+2y)dy = 0 umumiy integral qaysi?", options: ["A) sinx+xy+y²=C", "B) cosx+xy+y=C", "C) xy=C", "D) sinx+y=C"], answer: 0 },
+      { question: "31. (y+e^x)dx + (x+1)dy = 0 tenglama to‘la differensiallimi?", options: ["A) Ha", "B) Yo‘q", "C) Faqat x=0 da", "D) Faqat y=0 da"], answer: 0 },
+      { question: "32. (y+e^x)dx + (x+1)dy = 0 umumiy integral qaysi?", options: ["A) xy+y+e^x=C", "B) xy+e^x=C", "C) x+y=C", "D) xy=C"], answer: 0 },
+      { question: "33. (2x-siny)dx + xcosy dy = 0 tenglama to‘la differensiallimi?", options: ["A) Ha", "B) Yo‘q", "C) Faqat x=0 da", "D) Aniqlab bo‘lmaydi"], answer: 0 },
+      { question: "34. (2x-siny)dx + xcosy dy = 0 umumiy integral qaysi?", options: ["A) x²-xsiny=C", "B) 2x-siny=C", "C) xcosy=C", "D) x²+cosy=C"], answer: 0 },
+      { question: "35. (3x²+2y)dx + (2x+4y)dy = 0 tenglama to‘la differensiallimi?", options: ["A) Ha", "B) Yo‘q", "C) Faqat x=0 da", "D) Faqat y=0 da"], answer: 0 },
+      { question: "36. (3x²+2y)dx + (2x+4y)dy = 0 umumiy integral qaysi?", options: ["A) x³+2xy+2y²=C", "B) x³+2xy+y²=C", "C) 3x²+4y=C", "D) xy=C"], answer: 0 },
+      { question: "37. (x²+y)dx + (x+y²)dy = 0 tenglama to‘la differensiallimi?", options: ["A) Ha", "B) Yo‘q", "C) Faqat x=y da", "D) Faqat xy=0 da"], answer: 0 },
+      { question: "38. (x²+y)dx + (x+y²)dy = 0 umumiy integral qaysi?", options: ["A) x³/3 + xy + y³/3 = C", "B) x²+y²=C", "C) xy=C", "D) x+y=C"], answer: 0 },
+      { question: "39. (y+xcosy)dx + xsiny dy = 0 tenglama to‘la differensiallimi?", options: ["A) Ha", "B) Yo‘q", "C) Faqat x=0 da", "D) Faqat y=0 da"], answer: 1 },
+      { question: "40. To‘la differensialli tenglama uchun Fx=M, Fy=N nimani bildiradi?", options: ["A) F ning to‘liq differensiali tenglamaning chap tomoniga teng", "B) Tenglama chiziqli", "C) Tenglama ajraluvchan", "D) Yechim yagona emas"], answer: 0 },
+      { question: "41. Agar tenglama to‘la differensialli bo‘lsa, birinchi qadam nima?", options: ["A) Darhol y' ni topish", "B) M ni x bo‘yicha yoki N ni y bo‘yicha integrallash", "C) O‘zgaruvchilarni ajratish", "D) Integrallovchi ko‘paytuvchi kiritish"], answer: 1 },
+      { question: "42. Fx=M dan F ni topganda nima paydo bo‘lishi mumkin?", options: ["A) Faqat son", "B) Faqat x ga bog‘liq funksiya", "C) Faqat y ga bog‘liq qo‘shimcha funksiya", "D) Hech narsa qo‘shilmaydi"], answer: 2 },
+      { question: "43. F(x,y)=∫Mdx + φ(y) bo‘lsa, φ(y) qanday topiladi?", options: ["A) Fx=M dan", "B) Fy=N shartidan", "C) M=N dan", "D) y'=0 dan"], answer: 1 },
+      { question: "44. (6x+2y)dx + 2xdy = 0 umumiy integral qaysi?", options: ["A) 3x²+2xy=C", "B) 3x²+xy=C", "C) 6x+2y=C", "D) xy=C"], answer: 0 },
+      { question: "45. (2y+sinx)dx + (2x+3y²)dy = 0 tenglama to‘la differensiallimi?", options: ["A) Ha", "B) Yo‘q", "C) Faqat x=0 da", "D) Faqat y=0 da"], answer: 0 },
+      { question: "46. (2y+sinx)dx + (2x+3y²)dy = 0 umumiy integral qaysi?", options: ["A) 2xy-cosx+y³=C", "B) 2xy+cosx+y³=C", "C) x+y=C", "D) xy=C"], answer: 0 },
+      { question: "47. Integrallovchi ko‘paytuvchi yordamida tenglama to‘la differensialli bo‘lgach, keyingi bosqich nima?", options: ["A) Kvadratlash", "B) F(x,y)=C ni topish", "C) y ni nolga tenglash", "D) Faqat sonli yechim topish"], answer: 1 },
+      { question: "48. Integrallovchi ko‘paytuvchi topilgach, yangi tenglama uchun qaysi shart tekshiriladi?", options: ["A) M=N", "B) ∂M*/∂y = ∂N*/∂x", "C) M*+N*=0", "D) M*N*=1"], answer: 1 },
+      { question: "49. To‘la differensialli tenglamalar mavzusining eng muhim natijasi nima?", options: ["A) Har qanday tenglama ajraluvchan bo‘ladi", "B) Tenglama yechimi potensial funksiya orqali topiladi", "C) Har qanday yechim oshkor ko‘rinishda bo‘ladi", "D) Integrallash shart emas"], answer: 1 },
+      { question: "50. Bu mavzudagi asosiy maqsad nima?", options: ["A) Har doim y ni x orqali topish", "B) Chap tomonni biror funksiyaning to‘liq differensiali sifatida ko‘rsatish", "C) Faqat sonli metod bilan yechish", "D) Tenglamani yuqori tartibga keltirish"], answer: 1 }
+    ];
+
+    let selectedQuestions = [];
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+    let timeLeft = 50;
+    let timer;
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function startQuiz() {
+      selectedQuestions = shuffle([...questions]).slice(0, 10);
+      currentQuestionIndex = 0;
+      userAnswers = new Array(10).fill(null);
+      document.getElementById("result").classList.add("hidden");
+      document.getElementById("timeUpMessage").classList.add("hidden");
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timer);
+      timeLeft = 50;
+      document.getElementById("time").textContent = timeLeft;
+      document.getElementById("questionNumber").textContent = `Savol: ${currentQuestionIndex + 1} / 10`;
+      document.getElementById("timeUpMessage").classList.add("hidden");
+
+      const q = selectedQuestions[currentQuestionIndex];
+      const quizContainer = document.getElementById("quizContainer");
+
+      let optionsHTML = "";
+      q.options.forEach((option, index) => {
+        const checked = userAnswers[currentQuestionIndex] === index ? "checked" : "";
+        optionsHTML += `
+          <label>
+            <input type="radio" name="answer" value="${index}" ${checked}>
+            ${option}
+          </label>
+        `;
+      });
+
+      quizContainer.innerHTML = `
+        <h3>${q.question}</h3>
+        ${optionsHTML}
+      `;
+
+      timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("time").textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          saveAnswer();
+          document.getElementById("timeUpMessage").classList.remove("hidden");
+
+          setTimeout(() => {
+            if (currentQuestionIndex < selectedQuestions.length - 1) {
+              currentQuestionIndex++;
+              showQuestion();
+            } else {
+              finishQuiz();
+            }
+          }, 1000);
+        }
+      }, 1000);
+    }
+
+    function saveAnswer() {
+      const selected = document.querySelector('input[name="answer"]:checked');
+      if (selected) {
+        userAnswers[currentQuestionIndex] = parseInt(selected.value);
+      }
+    }
+
+    function nextQuestion() {
+      saveAnswer();
+
+      if (currentQuestionIndex < selectedQuestions.length - 1) {
+        currentQuestionIndex++;
+        showQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      clearInterval(timer);
+
+      let correct = 0;
+      let wrong = 0;
+      let empty = 0;
+      let reviewHTML = "";
+
+      selectedQuestions.forEach((q, i) => {
+        const user = userAnswers[i];
+        const correctAnswer = q.answer;
+
+        if (user === null) {
+          empty++;
+        } else if (user === correctAnswer) {
+          correct++;
+        } else {
+          wrong++;
+        }
+
+        reviewHTML += `
+          <div class="review-box">
+            <p><strong>${i + 1}. ${q.question}</strong></p>
+            <p>Sizning javobingiz:
+              ${
+                user === null
+                  ? '<span class="wrong-answer">Javob berilmagan</span>'
+                  : user === correctAnswer
+                  ? `<span class="correct-answer">${q.options[user]}</span>`
+                  : `<span class="wrong-answer">${q.options[user]}</span>`
+              }
+            </p>
+            <p>To'g'ri javob: <span class="correct-answer">${q.options[correctAnswer]}</span></p>
+          </div>
+        `;
+      });
+
+      const score = correct * 10;
+
+      const resultDiv = document.getElementById("result");
+      resultDiv.classList.remove("hidden");
+      resultDiv.innerHTML = `
+        <h2>Test natijasi</h2>
+        <p class="result-item">To'g'ri javoblar: <strong>${correct}</strong></p>
+        <p class="result-item">Noto'g'ri javoblar: <strong>${wrong}</strong></p>
+        <p class="result-item">Javob berilmagan: <strong>${empty}</strong></p>
+        <p class="result-item">Umumiy natija: <strong>${score} / 100</strong></p>
+        ${reviewHTML}
+      `;
+
+      document.getElementById("quizContainer").innerHTML = "<h3 style='text-align:center;'>Test tugadi</h3>";
+      document.getElementById("questionNumber").textContent = "Savol: 10 / 10";
+      document.getElementById("time").textContent = "0";
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
